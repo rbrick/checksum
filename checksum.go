@@ -42,7 +42,13 @@ func main() {
             if *v {
                 if exists(i) {
                     data, _ := ioutil.ReadFile(i)
-                    fmt.Printf("%s=%x [%s]\n", i, funcs[k](data), k)
+
+                    result := make(chan interface{})
+                    go func() {
+                       result <- funcs[k](data)
+                    } ()
+
+                    fmt.Printf("%s=%x [%s]\n", i, <-result, k)
                 }
             }
         }
